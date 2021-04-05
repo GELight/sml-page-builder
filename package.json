@@ -1,0 +1,49 @@
+{
+    "name": "@gelight/sml-page-builder",
+    "private": false,
+    "version": "0.0.1",
+    "description": "Simple Page Builder based on SML",
+    "main": "./dist/index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/GELight/sml-page-builder.git"
+    },
+    "keywords": [
+        "ReliableTXT",
+        "WhitespaceSV",
+        "SimpleML",
+        "SML",
+        "Simple",
+        "Markup",
+        "Language",
+        "WSV"
+    ],
+    "author": "Mario Linz",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/GELight/sml-page-builder/issues"
+    },
+    "homepage": "https://github.com/GELight/sml-page-builder#readme",
+    "scripts": {
+        "dev": "nodemon --watch 'src/**/*.ts' npm run build",
+        "build": "tsc && node dist/index.js",
+        "test:unit": "tsc && jest --coverage",
+        "publish": "RELEASE_VERSION=$npm_package_version ./build-release.sh"
+    },
+    "devDependencies": {
+        "@types/jest": "^26.0.20",
+        "@types/node": "^14.14.37",
+        "jest": "^26.6.3",
+        "marked": "^2.0.1",
+        "mkdirp": "^1.0.4",
+        "nodemon": "^2.0.7",
+        "ts-jest": "^26.5.1",
+        "tslint": "^5.12.1",
+        "typescript": "^3.3.3",
+        "@gelight/sml": "^0.1.2"
+    },
+    "files": [
+        "dist"
+    ],
+    "types": "types.d.ts"
+}
