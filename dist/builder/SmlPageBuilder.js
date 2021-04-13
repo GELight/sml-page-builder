@@ -34,6 +34,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sml_1 = require("@gelight/sml");
 const sml_2 = require("@gelight/sml");
 const fs = __importStar(require("fs"));
+const fse = __importStar(require("fs-extra"));
 const mkdirp_1 = __importDefault(require("mkdirp"));
 const path = __importStar(require("path"));
 const SmlToHtmlBuilder_1 = __importDefault(require("./SmlToHtmlBuilder"));
@@ -59,6 +60,10 @@ class SmlPageBuilder {
     }
     setPageConfigElementName(name) {
         this.PAGE_CONFIG_ELEMENT_NAME = name;
+        return this;
+    }
+    setAssetsPath(p) {
+        this.ASSETS_PATH = p;
         return this;
     }
     build() {
@@ -114,6 +119,7 @@ class SmlPageBuilder {
                 yield htmlBuilder.build();
                 this.saveHTMLFile(pageItem, htmlBuilder.getDomString());
             }
+            this.provideAssets();
         });
     }
     saveHTMLFile(pageItem, domString) {
@@ -123,6 +129,16 @@ class SmlPageBuilder {
         fs.writeFile(file, domString, () => {
             // ...
         });
+        return this;
+    }
+    provideAssets() {
+        console.log("provideAssets");
+        try {
+            fse.copySync(this.ASSETS_PATH, this.PAGES_OUTPUT_PATH);
+        }
+        catch (e) {
+            console.error(e);
+        }
         return this;
     }
 }

@@ -1,6 +1,7 @@
 import { ReliableTxtFile } from "@gelight/sml";
 import { SmlDocument } from "@gelight/sml";
 import * as fs from "fs";
+import * as fse from "fs-extra";
 import mkdirp from "mkdirp";
 import * as path from "path";
 import SmlToHtmlBuilder from "./SmlToHtmlBuilder";
@@ -11,6 +12,7 @@ export default class SmlPageBuilder {
     private PAGES_OUTPUT_PATH: string;
     private CHILDREN_ELEMENT_NAME: string = "Children";
     private PAGE_CONFIG_ELEMENT_NAME: string = "PageConfig";
+    private ASSETS_PATH: string;
 
     private pages: any[] = [];
     private customTags: any = {};
@@ -36,6 +38,11 @@ export default class SmlPageBuilder {
 
     public setPageConfigElementName(name: string): SmlPageBuilder {
         this.PAGE_CONFIG_ELEMENT_NAME = name;
+        return this;
+    }
+
+    public setAssetsPath(p: string): SmlPageBuilder {
+        this.ASSETS_PATH = p;
         return this;
     }
 
@@ -98,6 +105,8 @@ export default class SmlPageBuilder {
             await htmlBuilder.build();
             this.saveHTMLFile(pageItem, htmlBuilder.getDomString());
         }
+
+        this.provideAssets();
     }
 
     private saveHTMLFile(pageItem: any, domString: string): SmlPageBuilder {
@@ -108,6 +117,16 @@ export default class SmlPageBuilder {
         fs.writeFile(file, domString, () => {
             // ...
         });
+
+        return this;
+    }
+
+    private provideAssets(): SmlPageBuilder {
+        try {
+            fse.copySync(this.ASSETS_PATH, this.PAGES_OUTPUT_PATH)
+        } catch (e) {
+            console.error(e);
+        }
 
         return this;
     }
