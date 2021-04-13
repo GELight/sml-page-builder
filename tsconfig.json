@@ -10,14 +10,11 @@
   "lib": [
     "es2015"
   ],
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules",
-    "tests/**/*.spec.ts"
+    "**/*.spec.ts"
   ],
-  "files": [
-    "types.d.ts"
+  "include": [
+    "**/*.ts",
   ]
 }
