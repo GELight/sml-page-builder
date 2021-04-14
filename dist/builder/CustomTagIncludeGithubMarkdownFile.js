@@ -38,6 +38,8 @@ const CustomTag_1 = __importDefault(require("./CustomTag"));
 class CustomTagIncludeGithubMarkdownFile extends CustomTag_1.default {
     constructor(tagName, node) {
         super(tagName, node);
+        this.HOST = "";
+        this.FILE_PATH = "";
     }
     process() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -50,35 +52,42 @@ class CustomTagIncludeGithubMarkdownFile extends CustomTag_1.default {
         });
     }
     include(node) {
-        const url = node.getValues()[0];
+        this.HOST = node.getValues()[0];
+        this.FILE_PATH = node.getValues()[1];
+        const url = this.HOST + this.FILE_PATH;
         return new Promise((resolve, reject) => {
             https.get(url, (res) => {
-                res.setEncoding("utf8");
                 let body = "";
                 res.on("data", (chunk) => {
                     body += chunk;
                 });
                 res.on("end", () => {
-                    console.log(body);
-                    body = body.replace(/\r\n|\r/g, "\n")
-                        .replace(/\t/g, "    ")
-                        .replace(/[\w\<][^\n]*\n+/g, function (m) {
-                        return /\n{2}/.test(m) ? m : m.replace(/\s+$/, "") + "  \n";
-                    });
+                    body = this.fixBrokenLineBreaks(body);
+                    body = this.fixImageSrc(body);
                     const content = marked_1.default(body);
                     resolve(content);
                 });
-                // res.on("data", (d) => {
-                //     if (res.statusCode === 200) {
-                //         console.log(d.toString());
-                //         const content = marked(`${d.toString()}`);
-                //         resolve(content);
-                //     }
-                // });
             }).on("error", (e) => {
                 reject(e);
             });
         });
+    }
+    fixBrokenLineBreaks(content) {
+        return content
+            .replace(/\r\n|\r/g, "\n")
+            .replace(/\t/g, "    ")
+            .replace(/^[\w\<\>\*][^\n]*\n+/mg, (m) => {
+            return /\n{2}/.test(m) ? m : m.replace(/\s+$/, "") + "  \n";
+        });
+    }
+    fixImageSrc(content) {
+        /**
+         * Example:
+         * ![Preambles](/Images/Preambles.svg)
+         * to
+         * ![Preambles](https://............./Images/Preambles.svg)
+         */
+        return content.replace(/]\(\//g, `](${this.HOST}/`);
     }
 }
 exports.default = CustomTagIncludeGithubMarkdownFile;

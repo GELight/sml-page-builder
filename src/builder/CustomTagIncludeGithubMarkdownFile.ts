@@ -5,6 +5,9 @@ import CustomTag from "./CustomTag";
 
 export default class CustomTagIncludeGithubMarkdownFile extends CustomTag {
 
+    private HOST: string = "";
+    private FILE_PATH: string = "";
+
     constructor(tagName: string, node: SmlAttribute | SmlElement) {
         super(tagName, node);
     }
@@ -19,7 +22,11 @@ export default class CustomTagIncludeGithubMarkdownFile extends CustomTag {
     }
 
     private include(node: SmlAttribute): Promise<string> {
-        const url = node.getValues()[0];
+        this.HOST = node.getValues()[0];
+        this.FILE_PATH = node.getValues()[1];
+
+        const url = this.HOST + this.FILE_PATH;
+
         return new Promise((resolve, reject) => {
             https.get(url, (res) => {
                 let body = "";
@@ -28,6 +35,7 @@ export default class CustomTagIncludeGithubMarkdownFile extends CustomTag {
                 });
                 res.on("end", () => {
                     body = this.fixBrokenLineBreaks(body);
+                    body = this.fixImageSrc(body);
                     const content = marked(body);
                     resolve(content);
                 });
@@ -44,6 +52,16 @@ export default class CustomTagIncludeGithubMarkdownFile extends CustomTag {
             .replace(/^[\w\<\>\*][^\n]*\n+/mg, (m) => {
                 return /\n{2}/.test(m) ? m : m.replace(/\s+$/, "") + "  \n";
             });
+    }
+
+    private fixImageSrc(content: string): string {
+        /**
+         * Example:
+         * ![Preambles](/Images/Preambles.svg)
+         * to
+         * ![Preambles](https://............./Images/Preambles.svg)
+         */
+        return content.replace(/]\(\//g, `](${this.HOST}/`);
     }
 
 }
