@@ -22,16 +22,28 @@ export default class CustomTagIncludeGithubMarkdownFile extends CustomTag {
         const url = node.getValues()[0];
         return new Promise((resolve, reject) => {
             https.get(url, (res) => {
-                res.on("data", (d) => {
-                    if (res.statusCode === 200) {
-                        const content = marked(d.toString());
-                        resolve(content);
-                    }
+                let body = "";
+                res.on("data", (chunk) => {
+                    body += chunk;
+                });
+                res.on("end", () => {
+                    body = this.fixBrokenLineBreaks(body);
+                    const content = marked(body);
+                    resolve(content);
                 });
             }).on("error", (e) => {
                 reject(e);
             });
         });
+    }
+
+    private fixBrokenLineBreaks(content: string): string {
+        return content
+            .replace(/\r\n|\r/g, "\n")
+            .replace(/\t/g, "    ")
+            .replace(/^[\w\<\>\*][^\n]*\n+/mg, (m) => {
+                return /\n{2}/.test(m) ? m : m.replace(/\s+$/, "") + "  \n";
+            });
     }
 
 }

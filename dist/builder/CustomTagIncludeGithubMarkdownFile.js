@@ -53,12 +53,28 @@ class CustomTagIncludeGithubMarkdownFile extends CustomTag_1.default {
         const url = node.getValues()[0];
         return new Promise((resolve, reject) => {
             https.get(url, (res) => {
-                res.on("data", (d) => {
-                    if (res.statusCode === 200) {
-                        const content = marked_1.default(d.toString());
-                        resolve(content);
-                    }
+                res.setEncoding("utf8");
+                let body = "";
+                res.on("data", (chunk) => {
+                    body += chunk;
                 });
+                res.on("end", () => {
+                    console.log(body);
+                    body = body.replace(/\r\n|\r/g, "\n")
+                        .replace(/\t/g, "    ")
+                        .replace(/[\w\<][^\n]*\n+/g, function (m) {
+                        return /\n{2}/.test(m) ? m : m.replace(/\s+$/, "") + "  \n";
+                    });
+                    const content = marked_1.default(body);
+                    resolve(content);
+                });
+                // res.on("data", (d) => {
+                //     if (res.statusCode === 200) {
+                //         console.log(d.toString());
+                //         const content = marked(`${d.toString()}`);
+                //         resolve(content);
+                //     }
+                // });
             }).on("error", (e) => {
                 reject(e);
             });

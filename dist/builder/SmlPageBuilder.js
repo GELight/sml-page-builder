@@ -132,7 +132,6 @@ class SmlPageBuilder {
         return this;
     }
     provideAssets() {
-        console.log("provideAssets");
         try {
             fse.copySync(this.ASSETS_PATH, this.PAGES_OUTPUT_PATH);
         }
