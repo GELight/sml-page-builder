@@ -15,15 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sml_1 = require("@gelight/sml");
 const CustomTag_1 = __importDefault(require("./CustomTag"));
 class CustomTagText extends CustomTag_1.default {
-    constructor(tagName, node) {
-        super(tagName, node);
+    constructor(node, htmlBuilder) {
+        super(node, htmlBuilder);
     }
     process() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.node instanceof sml_1.SmlAttribute) {
-                if (this.node.name === this.tagName) {
-                    this.result = this.node.getValues().join(" ");
-                }
+                this.result = this.node.getValues().join(" ");
             }
             return this.result;
         });

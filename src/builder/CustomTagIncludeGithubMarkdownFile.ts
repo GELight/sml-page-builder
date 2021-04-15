@@ -2,21 +2,20 @@ import { SmlAttribute, SmlElement } from "@gelight/sml";
 import * as https from "https";
 import marked from "marked";
 import CustomTag from "./CustomTag";
+import SmlToHtmlBuilder from "./SmlToHtmlBuilder";
 
 export default class CustomTagIncludeGithubMarkdownFile extends CustomTag {
 
     private HOST: string = "";
     private FILE_PATH: string = "";
 
-    constructor(tagName: string, node: SmlAttribute | SmlElement) {
-        super(tagName, node);
+    constructor(node: SmlAttribute | SmlElement, htmlBuilder: SmlToHtmlBuilder) {
+        super(node, htmlBuilder);
     }
 
     protected async process(): Promise<string> {
         if (this.node instanceof SmlAttribute) {
-            if (this.node.name === this.tagName) {
-                this.result = await this.include(this.node);
-            }
+            this.result = await this.include(this.node);
         }
         return this.result;
     }

@@ -1,6 +1,7 @@
 import CustomTag from "./builder/CustomTag";
 
 import CustomTagIncludeGithubMarkdownFile from "./builder/CustomTagIncludeGithubMarkdownFile";
+import CustomTagLayout from "./builder/CustomTagLayout";
 import CustomTagText from "./builder/CustomTagText";
 
 import SmlPageBuilder from "./builder/SmlPageBuilder";
@@ -10,6 +11,7 @@ export {
     CustomTag,
 
     CustomTagIncludeGithubMarkdownFile,
+    CustomTagLayout,
     CustomTagText,
 
     SmlPageBuilder,

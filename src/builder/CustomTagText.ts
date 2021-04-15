@@ -1,17 +1,16 @@
 import { SmlAttribute, SmlElement, StringUtil } from "@gelight/sml";
 import CustomTag from "./CustomTag";
+import SmlToHtmlBuilder from "./SmlToHtmlBuilder";
 
 export default class CustomTagText extends CustomTag {
 
-    constructor(tagName: string, node: SmlAttribute | SmlElement) {
-        super(tagName, node);
+    constructor(node: SmlAttribute | SmlElement, htmlBuilder: SmlToHtmlBuilder) {
+        super(node, htmlBuilder);
     }
 
     protected async process(): Promise<string> {
         if (this.node instanceof SmlAttribute) {
-            if (this.node.name === this.tagName) {
-                this.result = this.node.getValues().join(" ");
-            }
+            this.result = this.node.getValues().join(" ");
         }
         return this.result;
     }

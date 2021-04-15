@@ -41,7 +41,6 @@ const SmlToHtmlBuilder_1 = __importDefault(require("./SmlToHtmlBuilder"));
 class SmlPageBuilder {
     constructor() {
         this.CHILDREN_ELEMENT_NAME = "Children";
-        this.PAGE_CONFIG_ELEMENT_NAME = "PageConfig";
         this.pages = [];
         this.customTags = {};
         return this;
@@ -56,10 +55,6 @@ class SmlPageBuilder {
     }
     setOutputPath(p) {
         this.PAGES_OUTPUT_PATH = p;
-        return this;
-    }
-    setPageConfigElementName(name) {
-        this.PAGE_CONFIG_ELEMENT_NAME = name;
         return this;
     }
     setAssetsPath(p) {

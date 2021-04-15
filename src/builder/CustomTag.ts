@@ -1,14 +1,15 @@
 import { SmlAttribute, SmlElement } from "@gelight/sml";
+import SmlToHtmlBuilder from "./SmlToHtmlBuilder";
 
 export default class CustomTag {
 
     protected node: SmlAttribute | SmlElement;
-    protected tagName: string = "";
+    protected htmlBuilder: SmlToHtmlBuilder;
     protected result: string = "";
 
-    constructor(tagName: string, node: SmlAttribute | SmlElement) {
-        this.tagName = tagName;
+    constructor(node: SmlAttribute | SmlElement, htmlBuilder: SmlToHtmlBuilder) {
         this.node = node;
+        this.htmlBuilder = htmlBuilder;
         this.result = "";
         this.process();
     }

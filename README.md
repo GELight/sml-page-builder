@@ -24,13 +24,15 @@ import { CustomTagIncludeGithubMarkdownFile, CustomTagText, SmlPageBuilder } fro
 
 const PATH = path.resolve(__dirname, "pages");
 const OUTPUT_PATH = path.resolve(__dirname, "sites");
+const ASSETS_PATH = path.resolve(__dirname, "assets");
 
 new SmlPageBuilder()
-    .setChildrenElementName("Children")
+    .setChildrenElementName("Children") // "Children" is the default children elementn name
+    .setAssetsPath(ASSETS_PATH)
     .setPagesPath(PATH)
     .setOutputPath(OUTPUT_PATH)
     .registerCustomTag("Text", CustomTagText)
-    .registerCustomTag("Include", CustomTagIncludeGithubMarkdownFile)
+    .registerCustomTag("IncludeGithubMarkdownFile", CustomTagIncludeGithubMarkdownFile)
     .build();
 ```
 Output:

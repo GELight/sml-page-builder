@@ -56,12 +56,17 @@ class SmlToHtmlBuilder {
                         }
                     }
                     if (node instanceof sml_1.SmlElement) {
-                        for (const attr of node.getAttributes()) {
-                            if (this.isCustomTag(attr)) {
-                                textContent += yield this.resolveNode(attr);
-                            }
-                            else {
-                                attrs.push(this.buildAttribute(attr));
+                        if (this.isCustomTag(node)) {
+                            textContent += yield this.resolveNode(node);
+                        }
+                        else {
+                            for (const attr of node.getAttributes()) {
+                                if (this.isCustomTag(attr)) {
+                                    textContent += yield this.resolveNode(attr);
+                                }
+                                else {
+                                    attrs.push(this.buildAttribute(attr));
+                                }
                             }
                         }
                         if (node.hasElement(this.CHILDREN_ELEMENT_NAME)) {
@@ -85,7 +90,7 @@ class SmlToHtmlBuilder {
     }
     resolveNode(node) {
         return __awaiter(this, void 0, void 0, function* () {
-            const tag = new this.customTags[node.name](node.name, node);
+            const tag = new this.customTags[node.name](node, this);
             return yield tag.process();
         });
     }

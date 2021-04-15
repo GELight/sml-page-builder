@@ -25,7 +25,7 @@
     },
     "homepage": "https://github.com/GELight/sml-page-builder#readme",
     "scripts": {
-        "dev": "nodemon --watch 'src/**/*.ts' npm run build",
+        "dev": "nodemon --watch 'src/**/*.ts'",
         "build": "tsc && node dist/index.js",
         "test:unit": "tsc && jest --coverage",
         "publish": "RELEASE_VERSION=$npm_package_version ./build-release.sh"

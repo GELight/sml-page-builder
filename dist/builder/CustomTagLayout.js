@@ -32,61 +32,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sml_1 = require("@gelight/sml");
-const https = __importStar(require("https"));
-const marked_1 = __importDefault(require("marked"));
+const fs = __importStar(require("fs"));
 const CustomTag_1 = __importDefault(require("./CustomTag"));
-class CustomTagIncludeGithubMarkdownFile extends CustomTag_1.default {
+class CustomTagLayout extends CustomTag_1.default {
     constructor(node, htmlBuilder) {
         super(node, htmlBuilder);
-        this.HOST = "";
-        this.FILE_PATH = "";
     }
     process() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.node instanceof sml_1.SmlAttribute) {
-                this.result = yield this.include(this.node);
+            if (this.node instanceof sml_1.SmlElement) {
+                this.file = this.node.getAttribute("file").getValues()[0];
+                try {
+                    const data = fs.readFileSync(this.file, "utf8");
+                    console.log(data);
+                }
+                catch (e) {
+                    console.error(e);
+                }
+                const layoutString = "xxx";
+                console.log(layoutString);
             }
             return this.result;
         });
     }
-    include(node) {
-        this.HOST = node.getValues()[0];
-        this.FILE_PATH = node.getValues()[1];
-        const url = this.HOST + this.FILE_PATH;
-        return new Promise((resolve, reject) => {
-            https.get(url, (res) => {
-                let body = "";
-                res.on("data", (chunk) => {
-                    body += chunk;
-                });
-                res.on("end", () => {
-                    body = this.fixBrokenLineBreaks(body);
-                    body = this.fixImageSrc(body);
-                    const content = marked_1.default(body);
-                    resolve(content);
-                });
-            }).on("error", (e) => {
-                reject(e);
-            });
-        });
-    }
-    fixBrokenLineBreaks(content) {
-        return content
-            .replace(/\r\n|\r/g, "\n")
-            .replace(/\t/g, "    ")
-            .replace(/^[\w\<\>\*][^\n]*\n+/mg, (m) => {
-            return /\n{2}/.test(m) ? m : m.replace(/\s+$/, "") + "  \n";
-        });
-    }
-    fixImageSrc(content) {
-        /**
-         * Example:
-         * ![Preambles](/Images/Preambles.svg)
-         * to
-         * ![Preambles](https://............./Images/Preambles.svg)
-         */
-        return content.replace(/]\(\//g, `](${this.HOST}/`);
-    }
 }
-exports.default = CustomTagIncludeGithubMarkdownFile;
-//# sourceMappingURL=CustomTagIncludeGithubMarkdownFile.js.map
+exports.default = CustomTagLayout;
+//# sourceMappingURL=CustomTagLayout.js.map

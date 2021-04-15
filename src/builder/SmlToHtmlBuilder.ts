@@ -58,11 +58,15 @@ export default class SmlToHtmlBuilder {
                 }
 
                 if (node instanceof SmlElement) {
-                    for (const attr of node.getAttributes()) {
-                        if (this.isCustomTag(attr)) {
-                            textContent += await this.resolveNode(attr);
-                        } else {
-                            attrs.push(this.buildAttribute(attr));
+                    if (this.isCustomTag(node)) {
+                        textContent += await this.resolveNode(node);
+                    } else {
+                        for (const attr of node.getAttributes()) {
+                            if (this.isCustomTag(attr)) {
+                                textContent += await this.resolveNode(attr);
+                            } else {
+                                attrs.push(this.buildAttribute(attr));
+                            }
                         }
                     }
 
@@ -92,7 +96,7 @@ export default class SmlToHtmlBuilder {
     }
 
     private async resolveNode(node: SmlAttribute | SmlElement): Promise<string> {
-        const tag = new this.customTags[node.name](node.name, node);
+        const tag = new this.customTags[node.name](node, this);
         return await tag.process();
     }
 
