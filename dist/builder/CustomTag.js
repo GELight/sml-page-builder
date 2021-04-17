@@ -12,14 +12,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class CustomTag {
     constructor(node, htmlBuilder) {
         this.result = "";
+        this.recursion = true;
         this.node = node;
         this.htmlBuilder = htmlBuilder;
         this.result = "";
-        this.process();
+    }
+    getResult() {
+        return this.result;
+    }
+    recursionAllowed() {
+        this.recursion = true;
+    }
+    recursionForbidden() {
+        this.recursion = false;
+    }
+    isRecursionAllowed() {
+        return this.recursion;
     }
     process() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.result;
+            return this;
         });
     }
 }

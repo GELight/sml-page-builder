@@ -1,16 +1,15 @@
 import { SmlAttribute, SmlElement } from "@gelight/sml";
+import CustomTag from "./CustomTag";
 import Page from "./Page";
-import SmlPageBuilder from "./SmlPageBuilder";
 
 export default class SmlToHtmlBuilder {
 
-    private PAGE_BUILDER: SmlPageBuilder;
-
     private PAGE: Page;
+
     private CHILDREN_ELEMENT_NAME: string = "Children";
+    private customTags: any = {};
 
     private domString: string;
-    private customTags: any = {};
 
     constructor(page: Page) {
         this.PAGE = page;
@@ -30,14 +29,13 @@ export default class SmlToHtmlBuilder {
         return this;
     }
 
-    public setPageBuilderInstance(pageBuilder: SmlPageBuilder): SmlToHtmlBuilder {
-        this.PAGE_BUILDER = pageBuilder;
-        return this;
-    }
-
     public setChildrenElementName(name: string): SmlToHtmlBuilder {
         this.CHILDREN_ELEMENT_NAME = name;
         return this;
+    }
+
+    public getChildrenElementName(): string {
+        return this.CHILDREN_ELEMENT_NAME;
     }
 
     public getDomString(): string {
@@ -53,52 +51,64 @@ export default class SmlToHtmlBuilder {
         return this;
     }
 
-    private async generateDomStringFromSmlDocument(childrenElements: SmlElement[]): Promise<string> {
+    public getRegisteredCustomTags(): any {
+        return this.customTags;
+    }
+
+    public setRegisteredCustomTags(tags: any): SmlToHtmlBuilder {
+        this.customTags = tags;
+        return this;
+    }
+
+    public setConfigFromHtmlBuilder(htmlBuilder: SmlToHtmlBuilder): any {
+        this.setChildrenElementName(htmlBuilder.getChildrenElementName());
+        this.setRegisteredCustomTags(htmlBuilder.getRegisteredCustomTags());
+    }
+
+    public async generateDomStringFromSmlDocument(childrenElements: SmlElement[]): Promise<string> {
         let domString = "";
 
         for (const element of childrenElements) {
             for (const node of element.nodes) {
-
                 const attrs = [];
-                let textContent = "";
-                let childrenContent = "";
+                let innerText = "";
 
                 if (node instanceof SmlAttribute) {
                     if (this.isCustomTag(node)) {
-                        textContent += await this.resolveNode(node);
-                    } else {
-                        attrs.push(this.buildAttribute(node));
+                        const resolvedNode = await this.resolveNode(node);
+                        innerText += resolvedNode.getResult();
                     }
                 }
 
                 if (node instanceof SmlElement) {
                     if (this.isCustomTag(node)) {
-                        textContent += await this.resolveNode(node);
+                        const resolvedNode = await this.resolveNode(node);
+                        innerText += resolvedNode.getResult();
                     } else {
                         for (const attr of node.getAttributes()) {
                             if (this.isCustomTag(attr)) {
-                                textContent += await this.resolveNode(attr);
+                                const resolvedNode = await this.resolveNode(attr);
+                                innerText += resolvedNode.getResult();
                             } else {
                                 attrs.push(this.buildAttribute(attr));
                             }
                         }
-                    }
-
-                    if (node.hasElement(this.CHILDREN_ELEMENT_NAME)) {
-                        childrenContent = await this.generateDomStringFromSmlDocument(
-                            node.getElements(this.CHILDREN_ELEMENT_NAME)
-                        );
+                        if (node.hasElement(this.CHILDREN_ELEMENT_NAME)) {
+                            innerText = await this.generateDomStringFromSmlDocument(
+                                node.getElements(this.CHILDREN_ELEMENT_NAME)
+                            );
+                        }
                     }
                 }
 
                 let openTag = "";
                 let closeTag = "";
-                if (!this.isCustomTag(node)) {
+                if (node instanceof SmlElement && !this.isCustomTag(node)) {
                     openTag = `<${node.name.toLowerCase()}${this.getAttributesAsString(attrs)}>`;
                     closeTag = `</${node.name.toLowerCase()}>`;
                 }
 
-                domString = domString.concat(openTag, textContent, childrenContent, closeTag);
+                domString = domString.concat(openTag, innerText, closeTag);
             }
         }
 
@@ -109,9 +119,12 @@ export default class SmlToHtmlBuilder {
         return node.name in this.customTags;
     }
 
-    private async resolveNode(node: SmlAttribute | SmlElement): Promise<string> {
-        const tag = new this.customTags[node.name](node, this);
-        return await tag.process();
+    private async resolveNode(node: SmlAttribute | SmlElement): Promise<CustomTag> {
+        if (node.name in this.customTags) {
+            const tag = new this.customTags[node.name](node, this);
+            return await tag.process();
+        }
+        return new CustomTag(node, this);
     }
 
     private buildAttribute(node: SmlAttribute): any {

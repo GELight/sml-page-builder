@@ -13,11 +13,11 @@ export default class CustomTagIncludeGithubMarkdownFile extends CustomTag {
         super(node, htmlBuilder);
     }
 
-    protected async process(): Promise<string> {
+    protected async process(): Promise<CustomTagIncludeGithubMarkdownFile> {
         if (this.node instanceof SmlAttribute) {
             this.result = await this.include(this.node);
         }
-        return this.result;
+        return this;
     }
 
     private include(node: SmlAttribute): Promise<string> {

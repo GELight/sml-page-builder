@@ -23,7 +23,7 @@ class CustomTagText extends CustomTag_1.default {
             if (this.node instanceof sml_1.SmlAttribute) {
                 this.result = this.node.getValues().join(" ");
             }
-            return this.result;
+            return this;
         });
     }
 }

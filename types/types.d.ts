@@ -9,5 +9,9 @@ interface CustomTag {
     node: SmlAttribute | SmlElement;
     result: string;
     "constructor"(node: SmlAttribute | SmlElement, htmlBuilder: SmlToHtmlBuilder): any;
-    process(node: SmlAttribute | SmlElement): string;
+    process(node: SmlAttribute | SmlElement): CustomTag;
+    getResult(): string;
+    recursionAllowed(): void;
+    recursionForbidden(): void;
+    isRecursionAllowed(): boolean;
 }

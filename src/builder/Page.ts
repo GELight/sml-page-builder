@@ -1,4 +1,4 @@
-import { ReliableTxtFile, SmlDocument } from "@gelight/sml";
+import { ReliableTxtFile, SmlDocument, SmlElement } from "@gelight/sml";
 import * as path from "path";
 
 export default class Page {
@@ -8,6 +8,7 @@ export default class Page {
     private doc: SmlDocument;
     private file: string;
     private filePath: string;
+    private slot: SmlElement;
 
     constructor(file: string) {
         const fileContent: string = new ReliableTxtFile().load(file).getContent();
@@ -40,6 +41,10 @@ export default class Page {
             .replace(path.extname(this.getFile()), ".html");
     }
 
+    public getPagesFolder(): string {
+        return this.PAGES_PATH;
+    }
+
     public setPagesFolder(p: string) {
         this.PAGES_PATH = p;
         this.filePath = this.getFile()
@@ -47,7 +52,15 @@ export default class Page {
             .replace(this.getFileName(), "");
     }
 
-    public getPagesFolder(): string {
-        return this.PAGES_PATH;
+    public setSlot(slot: SmlElement) {
+        this.slot = slot;
+    }
+
+    public getSlot(): SmlElement {
+        return this.slot;
+    }
+
+    public hasSlot(): boolean {
+        return this.slot !== null;
     }
 }

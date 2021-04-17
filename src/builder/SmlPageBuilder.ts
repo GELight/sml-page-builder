@@ -1,5 +1,3 @@
-import { ReliableTxtFile } from "@gelight/sml";
-import { SmlDocument } from "@gelight/sml";
 import * as fs from "fs";
 import * as fse from "fs-extra";
 import mkdirp from "mkdirp";

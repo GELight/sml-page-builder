@@ -46,14 +46,23 @@ class Page {
         return this.getFileName()
             .replace(path.extname(this.getFile()), ".html");
     }
+    getPagesFolder() {
+        return this.PAGES_PATH;
+    }
     setPagesFolder(p) {
         this.PAGES_PATH = p;
         this.filePath = this.getFile()
             .replace(this.PAGES_PATH, "")
             .replace(this.getFileName(), "");
     }
-    getPagesFolder() {
-        return this.PAGES_PATH;
+    setSlot(slot) {
+        this.slot = slot;
+    }
+    getSlot() {
+        return this.slot;
+    }
+    hasSlot() {
+        return this.slot !== null;
     }
 }
 exports.default = Page;

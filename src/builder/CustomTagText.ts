@@ -8,10 +8,10 @@ export default class CustomTagText extends CustomTag {
         super(node, htmlBuilder);
     }
 
-    protected async process(): Promise<string> {
+    protected async process(): Promise<CustomTagText> {
         if (this.node instanceof SmlAttribute) {
             this.result = this.node.getValues().join(" ");
         }
-        return this.result;
+        return this;
     }
 }
