@@ -11,17 +11,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const sml_1 = require("@gelight/sml");
 class SmlToHtmlBuilder {
-    constructor(doc) {
+    constructor(page) {
         this.CHILDREN_ELEMENT_NAME = "Children";
         this.customTags = {};
-        this.doc = doc;
+        this.PAGE = page;
         return this;
+    }
+    getPage() {
+        return this.PAGE;
     }
     build() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.domString = yield this.generateDomStringFromSmlDocument(this.doc.getRoot().getElements(this.CHILDREN_ELEMENT_NAME));
+            this.domString = yield this.generateDomStringFromSmlDocument(this.PAGE.getPageDocument()
+                .getRoot()
+                .getElements(this.CHILDREN_ELEMENT_NAME));
             return this;
         });
+    }
+    setPageBuilderInstance(pageBuilder) {
+        this.PAGE_BUILDER = pageBuilder;
+        return this;
     }
     setChildrenElementName(name) {
         this.CHILDREN_ELEMENT_NAME = name;

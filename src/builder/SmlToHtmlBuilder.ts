@@ -1,23 +1,37 @@
-import { SmlAttribute, SmlDocument, SmlElement, StringUtil } from "@gelight/sml";
-import * as https from "https";
+import { SmlAttribute, SmlElement } from "@gelight/sml";
+import Page from "./Page";
+import SmlPageBuilder from "./SmlPageBuilder";
 
 export default class SmlToHtmlBuilder {
 
-    private doc: SmlDocument;
+    private PAGE_BUILDER: SmlPageBuilder;
+
+    private PAGE: Page;
     private CHILDREN_ELEMENT_NAME: string = "Children";
 
     private domString: string;
     private customTags: any = {};
 
-    constructor(doc: SmlDocument) {
-        this.doc = doc;
+    constructor(page: Page) {
+        this.PAGE = page;
         return this;
+    }
+
+    public getPage() {
+        return this.PAGE;
     }
 
     public async build(): Promise<SmlToHtmlBuilder> {
         this.domString = await this.generateDomStringFromSmlDocument(
-            this.doc.getRoot().getElements(this.CHILDREN_ELEMENT_NAME)
+            this.PAGE.getPageDocument()
+                .getRoot()
+                .getElements(this.CHILDREN_ELEMENT_NAME)
         );
+        return this;
+    }
+
+    public setPageBuilderInstance(pageBuilder: SmlPageBuilder): SmlToHtmlBuilder {
+        this.PAGE_BUILDER = pageBuilder;
         return this;
     }
 

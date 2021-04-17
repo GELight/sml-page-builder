@@ -31,12 +31,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sml_1 = require("@gelight/sml");
-const sml_2 = require("@gelight/sml");
 const fs = __importStar(require("fs"));
 const fse = __importStar(require("fs-extra"));
 const mkdirp_1 = __importDefault(require("mkdirp"));
 const path = __importStar(require("path"));
+const Page_1 = __importDefault(require("./Page"));
 const SmlToHtmlBuilder_1 = __importDefault(require("./SmlToHtmlBuilder"));
 class SmlPageBuilder {
     constructor() {
@@ -83,43 +82,30 @@ class SmlPageBuilder {
                 folder = this.getAllFiles(`${filePath}/${file}`, folder);
             }
             else {
-                const fileContent = new sml_1.ReliableTxtFile().load(`${filePath}/${file}`).getContent();
-                const smlDocument = sml_2.SmlDocument.parse(fileContent);
-                folder.push({
-                    fileName: this.extractFileName(file),
-                    filePath: this.extractFilePath(filePath),
-                    page: smlDocument
-                });
+                const page = new Page_1.default(`${filePath}/${file}`);
+                page.setPagesFolder(this.PAGES_PATH);
+                folder.push(page);
             }
         });
         return folder;
     }
-    extractFileName(file) {
-        const lastDotPos = file.lastIndexOf(".");
-        const fileName = file.substr(0, lastDotPos < 0 ? file.length : lastDotPos) + ".html";
-        return fileName.toLowerCase();
-    }
-    extractFilePath(filePath) {
-        const extractedPath = filePath.replace(this.PAGES_PATH, "").toLowerCase();
-        return extractedPath || "/";
-    }
     generatePageStructure() {
         return __awaiter(this, void 0, void 0, function* () {
-            for (const pageItem of this.pages) {
-                const htmlBuilder = new SmlToHtmlBuilder_1.default(pageItem.page)
+            for (const smlPage of this.pages) {
+                const htmlBuilder = new SmlToHtmlBuilder_1.default(smlPage)
                     .setChildrenElementName(this.CHILDREN_ELEMENT_NAME);
                 for (const [customTagName, customTag] of Object.entries(this.customTags)) {
                     htmlBuilder.registerCustomTag(customTagName, customTag);
                 }
                 yield htmlBuilder.build();
-                this.saveHTMLFile(pageItem, htmlBuilder.getDomString());
+                this.saveHTMLFile(smlPage, htmlBuilder.getDomString());
             }
             this.provideAssets();
         });
     }
-    saveHTMLFile(pageItem, domString) {
-        const folder = path.join(this.PAGES_OUTPUT_PATH, pageItem.filePath);
-        const file = path.join(this.PAGES_OUTPUT_PATH, pageItem.filePath, pageItem.fileName);
+    saveHTMLFile(page, domString) {
+        const folder = path.join(this.PAGES_OUTPUT_PATH, page.getFilePath());
+        const file = path.join(this.PAGES_OUTPUT_PATH, page.getFilePath(), page.getHtmlFileName());
         mkdirp_1.default.sync(folder);
         fs.writeFile(file, domString, () => {
             // ...

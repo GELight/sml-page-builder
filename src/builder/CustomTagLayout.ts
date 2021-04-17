@@ -15,16 +15,15 @@ export default class CustomTagLayout extends CustomTag {
         if (this.node instanceof SmlElement) {
             this.file = this.node.getAttribute("file").getValues()[0];
 
-            try {
-                const data = fs.readFileSync(this.file, "utf8");
-                console.log(data);
-            } catch (e) {
-                console.error(e);
-            }
+            // console.log(this.htmlBuilder.getPage().getFolder());
 
-            const layoutString: string = "xxx";
+            // try {
+            //     const data = fs.readFileSync(this.file, "utf8");
+            //     console.log(data);
+            // } catch (e) {
+            //     console.error(e);
+            // }
 
-            console.log(layoutString);
         }
         return this.result;
     }

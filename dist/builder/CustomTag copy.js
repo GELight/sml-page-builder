@@ -8,31 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const sml_1 = require("@gelight/sml");
-const CustomTag_1 = __importDefault(require("./CustomTag"));
-class CustomTagLayout extends CustomTag_1.default {
+class CustomTag {
     constructor(node, htmlBuilder) {
-        super(node, htmlBuilder);
+        this.result = "";
+        this.node = node;
+        this.htmlBuilder = htmlBuilder;
+        this.result = "";
+        this.process();
     }
     process() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.node instanceof sml_1.SmlElement) {
-                this.file = this.node.getAttribute("file").getValues()[0];
-                // console.log(this.htmlBuilder.getPage().getFolder());
-                // try {
-                //     const data = fs.readFileSync(this.file, "utf8");
-                //     console.log(data);
-                // } catch (e) {
-                //     console.error(e);
-                // }
-            }
             return this.result;
         });
     }
 }
-exports.default = CustomTagLayout;
-//# sourceMappingURL=CustomTagLayout.js.map
+exports.default = CustomTag;
+//# sourceMappingURL=CustomTag copy.js.map

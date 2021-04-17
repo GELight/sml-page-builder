@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as fse from "fs-extra";
 import mkdirp from "mkdirp";
 import * as path from "path";
+import Page from "./Page";
 import SmlToHtmlBuilder from "./SmlToHtmlBuilder";
 
 export default class SmlPageBuilder {
@@ -63,33 +64,18 @@ export default class SmlPageBuilder {
             if (fs.statSync(filePath + "/" + file).isDirectory()) {
                 folder = this.getAllFiles(`${filePath}/${file}`, folder);
             } else {
-                const fileContent: string = new ReliableTxtFile().load(`${filePath}/${file}`).getContent();
-                const smlDocument: SmlDocument = SmlDocument.parse(fileContent);
-                folder.push({
-                    fileName: this.extractFileName(file),
-                    filePath: this.extractFilePath(filePath),
-                    page: smlDocument
-                });
+                const page = new Page(`${filePath}/${file}`);
+                page.setPagesFolder(this.PAGES_PATH);
+                folder.push(page);
             }
         });
 
         return folder;
     }
 
-    private extractFileName(file: string): string {
-        const lastDotPos: number = file.lastIndexOf(".");
-        const fileName: string = file.substr(0, lastDotPos < 0 ? file.length : lastDotPos) + ".html";
-        return fileName.toLowerCase();
-    }
-
-    private extractFilePath(filePath: string): string {
-        const extractedPath: string = filePath.replace(this.PAGES_PATH, "").toLowerCase();
-        return extractedPath || "/";
-    }
-
     private async generatePageStructure() {
-        for (const pageItem of this.pages) {
-            const htmlBuilder = new SmlToHtmlBuilder(pageItem.page)
+        for (const smlPage of this.pages) {
+            const htmlBuilder = new SmlToHtmlBuilder(smlPage)
                 .setChildrenElementName(this.CHILDREN_ELEMENT_NAME);
 
             for (const [customTagName, customTag] of Object.entries(this.customTags)) {
@@ -97,15 +83,15 @@ export default class SmlPageBuilder {
             }
 
             await htmlBuilder.build();
-            this.saveHTMLFile(pageItem, htmlBuilder.getDomString());
+            this.saveHTMLFile(smlPage, htmlBuilder.getDomString());
         }
 
         this.provideAssets();
     }
 
-    private saveHTMLFile(pageItem: any, domString: string): SmlPageBuilder {
-        const folder = path.join(this.PAGES_OUTPUT_PATH, pageItem.filePath);
-        const file = path.join(this.PAGES_OUTPUT_PATH, pageItem.filePath, pageItem.fileName);
+    private saveHTMLFile(page: Page, domString: string): SmlPageBuilder {
+        const folder = path.join(this.PAGES_OUTPUT_PATH, page.getFilePath());
+        const file = path.join(this.PAGES_OUTPUT_PATH, page.getFilePath(), page.getHtmlFileName());
 
         mkdirp.sync(folder);
         fs.writeFile(file, domString, () => {
