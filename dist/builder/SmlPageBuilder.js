@@ -39,13 +39,8 @@ const Page_1 = __importDefault(require("./Page"));
 const SmlToHtmlBuilder_1 = __importDefault(require("./SmlToHtmlBuilder"));
 class SmlPageBuilder {
     constructor() {
-        this.CHILDREN_ELEMENT_NAME = "Children";
         this.pages = [];
         this.customTags = {};
-        return this;
-    }
-    setChildrenElementName(name) {
-        this.CHILDREN_ELEMENT_NAME = name;
         return this;
     }
     setPagesPath(url) {
@@ -92,8 +87,7 @@ class SmlPageBuilder {
     generatePageStructure() {
         return __awaiter(this, void 0, void 0, function* () {
             for (const smlPage of this.pages) {
-                const htmlBuilder = new SmlToHtmlBuilder_1.default(smlPage)
-                    .setChildrenElementName(this.CHILDREN_ELEMENT_NAME);
+                const htmlBuilder = new SmlToHtmlBuilder_1.default(smlPage);
                 for (const [customTagName, customTag] of Object.entries(this.customTags)) {
                     htmlBuilder.registerCustomTag(customTagName, customTag);
                 }

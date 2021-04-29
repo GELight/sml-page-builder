@@ -53,15 +53,13 @@ class CustomTagSlot extends CustomTag_1.default {
     }
     toProcessElement() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.recursionForbidden();
             this.file = this.node.getAttribute("From").getValues()[0];
             const folder = this.htmlBuilder.getPage().getFolder();
             const filePath = path.join(folder, this.file);
             const page = new Page_1.default(filePath);
             page.setPagesFolder(folder);
-            if (this.node.hasElement(this.htmlBuilder.getChildrenElementName())) {
-                page.setSlot(this.node);
-            }
+            console.log(this.node);
+            page.setSlot(this.node);
             const newHtmlBuilder = new SmlToHtmlBuilder_1.default(page);
             newHtmlBuilder.setConfigFromHtmlBuilder(this.htmlBuilder);
             yield newHtmlBuilder.build();
@@ -72,10 +70,10 @@ class CustomTagSlot extends CustomTag_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             const currentSlot = this.node.getValues()[0];
             const slotName = this.htmlBuilder.getPage().getSlot().getAttribute("Name").getValues()[0];
+            console.log(currentSlot, slotName);
+            console.log(this.htmlBuilder.getPage().getSlot());
             if (currentSlot === slotName) {
-                return this.htmlBuilder.generateDomStringFromSmlDocument([
-                    this.htmlBuilder.getPage().getSlot().getElement(this.htmlBuilder.getChildrenElementName())
-                ]);
+                return this.htmlBuilder.generateDomStringFromSmlDocument(this.htmlBuilder.getPage().getSlot().getElements());
             }
             return "";
         });

@@ -28,12 +28,17 @@ const CustomTagText_1 = __importDefault(require("./../builder/CustomTagText"));
 const SmlPageBuilder_1 = __importDefault(require("./../builder/SmlPageBuilder"));
 const PATH = path.resolve(__dirname, "..", "pages");
 const OUTPUT_PATH = path.resolve(__dirname, "..", "sites");
+const ASSETS_PATH = path.resolve(__dirname, "..", "src", "assets");
+const sml_page_builder_1 = require("@gelight/sml-page-builder");
+const PATH = path.resolve(__dirname, "..", "src", "reliabletxt.com");
+const ASSETS_PATH = path.resolve(__dirname, "..", "src", "assets");
+const OUTPUT_PATH = path.resolve(__dirname, "pages", "reliabletxt.com");
 new SmlPageBuilder_1.default()
-    .setChildrenElementName("Children")
+    .setAssetsPath(ASSETS_PATH)
     .setPagesPath(PATH)
     .setOutputPath(OUTPUT_PATH)
     .registerCustomTag("Text", CustomTagText_1.default)
-    .registerCustomTag("Include", CustomTagIncludeGithubMarkdownFile_1.default)
+    .registerCustomTag("Slot", sml_page_builder_1.CustomTagSlot)
+    .registerCustomTag("IncludeGithubMarkdownFile", CustomTagIncludeGithubMarkdownFile_1.default)
     .build();
-exports.default = {};
 //# sourceMappingURL=demo.js.map
