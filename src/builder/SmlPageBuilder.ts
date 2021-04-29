@@ -9,18 +9,12 @@ export default class SmlPageBuilder {
 
     private PAGES_PATH: string;
     private PAGES_OUTPUT_PATH: string;
-    private CHILDREN_ELEMENT_NAME: string = "Children";
     private ASSETS_PATH: string;
 
     private pages: any[] = [];
     private customTags: any = {};
 
     constructor() {
-        return this;
-    }
-
-    public setChildrenElementName(name: string): SmlPageBuilder {
-        this.CHILDREN_ELEMENT_NAME = name;
         return this;
     }
 
@@ -73,8 +67,7 @@ export default class SmlPageBuilder {
 
     private async generatePageStructure() {
         for (const smlPage of this.pages) {
-            const htmlBuilder = new SmlToHtmlBuilder(smlPage)
-                .setChildrenElementName(this.CHILDREN_ELEMENT_NAME);
+            const htmlBuilder = new SmlToHtmlBuilder(smlPage);
 
             for (const [customTagName, customTag] of Object.entries(this.customTags)) {
                 htmlBuilder.registerCustomTag(customTagName, customTag);

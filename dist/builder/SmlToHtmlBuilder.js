@@ -16,7 +16,6 @@ const sml_1 = require("@gelight/sml");
 const CustomTag_1 = __importDefault(require("./CustomTag"));
 class SmlToHtmlBuilder {
     constructor(page) {
-        this.CHILDREN_ELEMENT_NAME = "Children";
         this.customTags = {};
         this.PAGE = page;
         return this;
@@ -28,16 +27,9 @@ class SmlToHtmlBuilder {
         return __awaiter(this, void 0, void 0, function* () {
             this.domString = yield this.generateDomStringFromSmlDocument(this.PAGE.getPageDocument()
                 .getRoot()
-                .getElements(this.CHILDREN_ELEMENT_NAME));
+                .getElements());
             return this;
         });
-    }
-    setChildrenElementName(name) {
-        this.CHILDREN_ELEMENT_NAME = name;
-        return this;
-    }
-    getChildrenElementName() {
-        return this.CHILDREN_ELEMENT_NAME;
     }
     getDomString() {
         return this.domString;
@@ -59,50 +51,45 @@ class SmlToHtmlBuilder {
         return this;
     }
     setConfigFromHtmlBuilder(htmlBuilder) {
-        this.setChildrenElementName(htmlBuilder.getChildrenElementName());
         this.setRegisteredCustomTags(htmlBuilder.getRegisteredCustomTags());
     }
     generateDomStringFromSmlDocument(childrenElements) {
         return __awaiter(this, void 0, void 0, function* () {
             let domString = "";
             for (const element of childrenElements) {
-                for (const node of element.nodes) {
-                    const attrs = [];
-                    let innerText = "";
-                    if (node instanceof sml_1.SmlAttribute) {
-                        if (this.isCustomTag(node)) {
-                            const resolvedNode = yield this.resolveNode(node);
-                            innerText += resolvedNode.getResult();
-                        }
-                    }
-                    if (node instanceof sml_1.SmlElement) {
+                const attrs = [];
+                let innerText = "";
+                if (this.isCustomTag(element)) {
+                    const resolvedNode = yield this.resolveNode(element);
+                    innerText += resolvedNode.getResult();
+                }
+                else {
+                    for (const node of element.getAttributes()) {
                         if (this.isCustomTag(node)) {
                             const resolvedNode = yield this.resolveNode(node);
                             innerText += resolvedNode.getResult();
                         }
                         else {
-                            for (const attr of node.getAttributes()) {
-                                if (this.isCustomTag(attr)) {
-                                    const resolvedNode = yield this.resolveNode(attr);
-                                    innerText += resolvedNode.getResult();
-                                }
-                                else {
-                                    attrs.push(this.buildAttribute(attr));
-                                }
-                            }
-                            if (node.hasElement(this.CHILDREN_ELEMENT_NAME)) {
-                                innerText = yield this.generateDomStringFromSmlDocument(node.getElements(this.CHILDREN_ELEMENT_NAME));
-                            }
+                            attrs.push(this.buildAttribute(node));
                         }
                     }
-                    let openTag = "";
-                    let closeTag = "";
-                    if (node instanceof sml_1.SmlElement && !this.isCustomTag(node)) {
-                        openTag = `<${node.name.toLowerCase()}${this.getAttributesAsString(attrs)}>`;
-                        closeTag = `</${node.name.toLowerCase()}>`;
+                    for (const node of element.getElements()) {
+                        if (this.isCustomTag(node)) {
+                            const resolvedNode = yield this.resolveNode(node);
+                            innerText += resolvedNode.getResult();
+                        }
+                        else {
+                            innerText += yield this.generateDomStringFromSmlDocument([node]);
+                        }
                     }
-                    domString = domString.concat(openTag, innerText, closeTag);
                 }
+                let openTag = "";
+                let closeTag = "";
+                if (element instanceof sml_1.SmlElement && !this.isCustomTag(element)) {
+                    openTag = `<${element.name.toLowerCase()}${this.getAttributesAsString(attrs)}>`;
+                    closeTag = `</${element.name.toLowerCase()}>`;
+                }
+                domString = domString.concat(openTag, innerText, closeTag);
             }
             return domString.replace(" >", ">");
         });
@@ -112,7 +99,7 @@ class SmlToHtmlBuilder {
     }
     resolveNode(node) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (node.name in this.customTags) {
+            if (this.isCustomTag(node)) {
                 const tag = new this.customTags[node.name](node, this);
                 return yield tag.process();
             }
