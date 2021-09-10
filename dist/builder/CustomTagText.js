@@ -17,6 +17,7 @@ const CustomTag_1 = __importDefault(require("./CustomTag"));
 class CustomTagText extends CustomTag_1.default {
     constructor(node, htmlBuilder) {
         super(node, htmlBuilder);
+        this.result = "";
     }
     process() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -25,6 +26,9 @@ class CustomTagText extends CustomTag_1.default {
             }
             return this;
         });
+    }
+    getResult() {
+        return this.result;
     }
 }
 exports.default = CustomTagText;

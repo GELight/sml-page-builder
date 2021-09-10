@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as fse from "fs-extra";
 import mkdirp from "mkdirp";
 import * as path from "path";
+import { CustomTag } from "..";
 import Page from "./Page";
 import SmlToHtmlBuilder from "./SmlToHtmlBuilder";
 
@@ -11,7 +12,7 @@ export default class SmlPageBuilder {
     private PAGES_OUTPUT_PATH: string;
     private ASSETS_PATH: string;
 
-    private pages: any[] = [];
+    private pages: Page[];
     private customTags: any = {};
 
     constructor() {
@@ -34,12 +35,12 @@ export default class SmlPageBuilder {
     }
 
     public build(): SmlPageBuilder {
-        this.pages = this.getAllFiles(this.PAGES_PATH, []);
+        this.pages = this.getAllFiles(this.PAGES_PATH);
         this.generatePageStructure();
         return this;
     }
 
-    public registerCustomTag(tagName: string, customTag: any): SmlPageBuilder {
+    public registerCustomTag(tagName: string, customTag: CustomTag): SmlPageBuilder {
         if (!this.customTags[tagName]) {
             this.customTags[tagName] = customTag;
         } else {
@@ -48,36 +49,36 @@ export default class SmlPageBuilder {
         return this;
     }
 
-    private getAllFiles(filePath: string, filesList: string[]): string[] {
-        const files = fs.readdirSync(filePath);
-        let folder: any = filesList || [];
+    private getAllFiles(filePath: string): Page[] {
+        const directoryFiles: string[] = fs.readdirSync(filePath);
+        let pages: Page[] = [];
 
-        files.forEach((file) => {
+        directoryFiles.forEach((file) => {
             if (fs.statSync(filePath + "/" + file).isDirectory()) {
-                folder = this.getAllFiles(`${filePath}/${file}`, folder);
+                pages = this.getAllFiles(`${filePath}/${file}`);
             } else {
-                const page = new Page(`${filePath}/${file}`);
+                const page: Page = new Page(`${filePath}/${file}`);
                 page.setPagesFolder(this.PAGES_PATH);
-                folder.push(page);
+                pages.push(page);
             }
         });
-
-        return folder;
+        return pages;
     }
 
     private async generatePageStructure() {
-        for (const smlPage of this.pages) {
-            const htmlBuilder = new SmlToHtmlBuilder(smlPage);
+        console.log(this.pages);
+        // for (const page of this.pages) {
+        //     const htmlBuilder = new SmlToHtmlBuilder(page);
 
-            for (const [customTagName, customTag] of Object.entries(this.customTags)) {
-                htmlBuilder.registerCustomTag(customTagName, customTag);
-            }
+        //     for (const [customTagName, customTag] of Object.entries(this.customTags)) {
+        //         htmlBuilder.registerCustomTag(customTagName, customTag);
+        //     }
 
-            await htmlBuilder.build();
-            this.saveHTMLFile(smlPage, htmlBuilder.getDomString());
-        }
+        //     await htmlBuilder.build();
+        //     this.saveHTMLFile(page, htmlBuilder.getDomString());
+        // }
 
-        this.provideAssets();
+        // this.provideAssets();
     }
 
     private saveHTMLFile(page: Page, domString: string): SmlPageBuilder {

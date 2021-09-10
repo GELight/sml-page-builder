@@ -1,7 +1,7 @@
 import * as path from "path";
-import CustomTagIncludeGithubMarkdownFile from "./../builder/CustomTagIncludeGithubMarkdownFile";
-import CustomTagSlot from "./../builder/CustomTagSlot";
 import CustomTagText from "./../builder/CustomTagText";
+// import CustomTagSlot from "./../builder/CustomTagSlot";
+// import CustomTagIncludeGithubMarkdownFile from "./../builder/CustomTagIncludeGithubMarkdownFile";
 import SmlPageBuilder from "./../builder/SmlPageBuilder";
 
 const PATH = path.resolve(__dirname, "..", "pages");
@@ -13,6 +13,6 @@ new SmlPageBuilder()
     .setPagesPath(PATH)
     .setOutputPath(OUTPUT_PATH)
     .registerCustomTag("Text", CustomTagText)
-    .registerCustomTag("Slot", CustomTagSlot)
-    .registerCustomTag("IncludeGithubMarkdownFile", CustomTagIncludeGithubMarkdownFile)
+//     .registerCustomTag("Slot", CustomTagSlot)
+//     .registerCustomTag("IncludeGithubMarkdownFile", CustomTagIncludeGithubMarkdownFile)
     .build();

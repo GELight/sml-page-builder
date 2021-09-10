@@ -12,7 +12,7 @@ export default class CustomTagSlot extends CustomTag {
         super(node, htmlBuilder);
     }
 
-    protected async process(): Promise<CustomTagSlot> {
+    public async process(): Promise<CustomTagSlot> {
         if (this.node instanceof SmlElement) {
             this.result = await this.toProcessElement();
         } else if (this.node instanceof SmlAttribute) {

@@ -13,7 +13,7 @@ export default class CustomTagIncludeGithubMarkdownFile extends CustomTag {
         super(node, htmlBuilder);
     }
 
-    protected async process(): Promise<CustomTagIncludeGithubMarkdownFile> {
+    public async process(): Promise<CustomTagIncludeGithubMarkdownFile> {
         if (this.node instanceof SmlAttribute) {
             this.result = await this.include(this.node);
         }
@@ -48,7 +48,7 @@ export default class CustomTagIncludeGithubMarkdownFile extends CustomTag {
         return content
             .replace(/\r\n|\r/g, "\n")
             .replace(/\t/g, "    ")
-            .replace(/^[\w\<\>\*][^\n]*\n+/mg, (m) => {
+            .replace(/^[\w<>*][^\n]*\n+/mg, (m) => {
                 return /\n{2}/.test(m) ? m : m.replace(/\s+$/, "") + "  \n";
             });
     }

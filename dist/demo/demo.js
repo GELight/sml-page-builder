@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -23,9 +23,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = __importStar(require("path"));
-const CustomTagIncludeGithubMarkdownFile_1 = __importDefault(require("./../builder/CustomTagIncludeGithubMarkdownFile"));
-const CustomTagSlot_1 = __importDefault(require("./../builder/CustomTagSlot"));
 const CustomTagText_1 = __importDefault(require("./../builder/CustomTagText"));
+// import CustomTagSlot from "./../builder/CustomTagSlot";
+// import CustomTagIncludeGithubMarkdownFile from "./../builder/CustomTagIncludeGithubMarkdownFile";
 const SmlPageBuilder_1 = __importDefault(require("./../builder/SmlPageBuilder"));
 const PATH = path.resolve(__dirname, "..", "pages");
 const OUTPUT_PATH = path.resolve(__dirname, "..", "sites");
@@ -35,7 +35,7 @@ new SmlPageBuilder_1.default()
     .setPagesPath(PATH)
     .setOutputPath(OUTPUT_PATH)
     .registerCustomTag("Text", CustomTagText_1.default)
-    .registerCustomTag("Slot", CustomTagSlot_1.default)
-    .registerCustomTag("IncludeGithubMarkdownFile", CustomTagIncludeGithubMarkdownFile_1.default)
+    //     .registerCustomTag("Slot", CustomTagSlot)
+    //     .registerCustomTag("IncludeGithubMarkdownFile", CustomTagIncludeGithubMarkdownFile)
     .build();
 //# sourceMappingURL=demo.js.map

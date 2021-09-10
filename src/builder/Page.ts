@@ -45,14 +45,14 @@ export default class Page {
         return this.PAGES_PATH;
     }
 
-    public setPagesFolder(p: string) {
+    public setPagesFolder(p: string): void {
         this.PAGES_PATH = p;
         this.filePath = this.getFile()
             .replace(this.PAGES_PATH, "")
             .replace(this.getFileName(), "");
     }
 
-    public setSlot(slot: SmlElement) {
+    public setSlot(slot: SmlElement): void {
         this.slot = slot;
     }
 

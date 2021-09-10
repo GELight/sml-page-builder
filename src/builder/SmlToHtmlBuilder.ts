@@ -1,4 +1,5 @@
 import { SmlAttribute, SmlElement } from "@gelight/sml";
+import { CustomTagText } from "..";
 import CustomTag from "./CustomTag";
 import Page from "./Page";
 
@@ -13,7 +14,7 @@ export default class SmlToHtmlBuilder {
         return this;
     }
 
-    public getPage() {
+    public getPage(): Page {
         return this.PAGE;
     }
 
@@ -30,7 +31,7 @@ export default class SmlToHtmlBuilder {
         return this.domString;
     }
 
-    public registerCustomTag(tagName: string, customTag: any): SmlToHtmlBuilder {
+    public registerCustomTag(tagName: string, customTag: typeof CustomTag): SmlToHtmlBuilder {
         if (!this.customTags[tagName]) {
             this.customTags[tagName] = customTag;
         } else {

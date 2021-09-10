@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -36,10 +36,8 @@ const fse = __importStar(require("fs-extra"));
 const mkdirp_1 = __importDefault(require("mkdirp"));
 const path = __importStar(require("path"));
 const Page_1 = __importDefault(require("./Page"));
-const SmlToHtmlBuilder_1 = __importDefault(require("./SmlToHtmlBuilder"));
 class SmlPageBuilder {
     constructor() {
-        this.pages = [];
         this.customTags = {};
         return this;
     }
@@ -56,7 +54,7 @@ class SmlPageBuilder {
         return this;
     }
     build() {
-        this.pages = this.getAllFiles(this.PAGES_PATH, []);
+        this.pages = this.getAllFiles(this.PAGES_PATH);
         this.generatePageStructure();
         return this;
     }
@@ -69,32 +67,33 @@ class SmlPageBuilder {
         }
         return this;
     }
-    getAllFiles(filePath, filesList) {
-        const files = fs.readdirSync(filePath);
-        let folder = filesList || [];
-        files.forEach((file) => {
+    getAllFiles(filePath) {
+        const directoryFiles = fs.readdirSync(filePath);
+        let pages = [];
+        directoryFiles.forEach((file) => {
             if (fs.statSync(filePath + "/" + file).isDirectory()) {
-                folder = this.getAllFiles(`${filePath}/${file}`, folder);
+                pages = this.getAllFiles(`${filePath}/${file}`);
             }
             else {
                 const page = new Page_1.default(`${filePath}/${file}`);
                 page.setPagesFolder(this.PAGES_PATH);
-                folder.push(page);
+                pages.push(page);
             }
         });
-        return folder;
+        return pages;
     }
     generatePageStructure() {
         return __awaiter(this, void 0, void 0, function* () {
-            for (const smlPage of this.pages) {
-                const htmlBuilder = new SmlToHtmlBuilder_1.default(smlPage);
-                for (const [customTagName, customTag] of Object.entries(this.customTags)) {
-                    htmlBuilder.registerCustomTag(customTagName, customTag);
-                }
-                yield htmlBuilder.build();
-                this.saveHTMLFile(smlPage, htmlBuilder.getDomString());
-            }
-            this.provideAssets();
+            console.log(this.pages);
+            // for (const page of this.pages) {
+            //     const htmlBuilder = new SmlToHtmlBuilder(page);
+            //     for (const [customTagName, customTag] of Object.entries(this.customTags)) {
+            //         htmlBuilder.registerCustomTag(customTagName, customTag);
+            //     }
+            //     await htmlBuilder.build();
+            //     this.saveHTMLFile(page, htmlBuilder.getDomString());
+            // }
+            // this.provideAssets();
         });
     }
     saveHTMLFile(page, domString) {

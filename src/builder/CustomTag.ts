@@ -1,12 +1,11 @@
 import { SmlAttribute, SmlElement } from "@gelight/sml";
-import { CustomTagText } from "..";
 import SmlToHtmlBuilder from "./SmlToHtmlBuilder";
 
-export default class CustomTag {
+export default class CustomTag implements CustomTag {
 
-    protected node: SmlAttribute | SmlElement;
-    protected htmlBuilder: SmlToHtmlBuilder;
-    protected result: string = "";
+    public node: SmlAttribute | SmlElement;
+    public htmlBuilder: SmlToHtmlBuilder;
+    public result: string = "";
 
     constructor(node: SmlAttribute | SmlElement, htmlBuilder: SmlToHtmlBuilder) {
         this.node = node;
@@ -18,7 +17,7 @@ export default class CustomTag {
         return this.result;
     }
 
-    protected async process(): Promise<CustomTag> {
+    public async process(): Promise<CustomTag> {
         return this;
     }
 }

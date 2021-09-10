@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -62,7 +62,7 @@ class CustomTagIncludeGithubMarkdownFile extends CustomTag_1.default {
                 res.on("end", () => {
                     body = this.fixBrokenLineBreaks(body);
                     body = this.fixImageSrc(body);
-                    const content = marked_1.default(body);
+                    const content = (0, marked_1.default)(body);
                     resolve(content);
                 });
             }).on("error", (e) => {
@@ -74,7 +74,7 @@ class CustomTagIncludeGithubMarkdownFile extends CustomTag_1.default {
         return content
             .replace(/\r\n|\r/g, "\n")
             .replace(/\t/g, "    ")
-            .replace(/^[\w\<\>\*][^\n]*\n+/mg, (m) => {
+            .replace(/^[\w<>*][^\n]*\n+/mg, (m) => {
             return /\n{2}/.test(m) ? m : m.replace(/\s+$/, "") + "  \n";
         });
     }
